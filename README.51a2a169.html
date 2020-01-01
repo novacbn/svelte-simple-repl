@@ -1,0 +1,191 @@
+<h1 id="svelte-simple-repl">svelte-simple-repl</h1><blockquote>
+<p><strong>NOTE</strong>: Not ready yet for installation, build chain needs to be finalized.</p>
+</blockquote><h2 id="description">Description</h2><p>Simple Svelte v3 Component for providing an end-user editable view for real-time rendering of Svelte code.</p><h2 id="live-demo">Live Demo</h2><p>Visit the <a href="https://novacbn.github.io/svelte-simple-repl#demo">Demo Page</a> for a live demo of each type of Repl.</p><h2 id="why-">Why?</h2><p>I need a straight-forward way of integrating interactive Repl snippets for the documentation of some of my other projects. And the Repl that powers the Svelte Docs, <a href="https://github.com/sveltejs/svelte-repl"><code>sveltejs/svelte-repl</code></a> isn&#39;t documented that well. And is pretty complex, with multi-file support and using Rollup as a service! <em>(also I couldn&#39;t figure out how to use it)</em></p><p>So this package of Components supports a straight forward use case of, run the Svelte Compiler in browser and display the results. No other fancy-ness.</p><h2 id="caveats">Caveats</h2><ul>
+<li>The height of the Repl elements must be set, either through the <code>.style</code> property, or otherwise through a CSS stylesheet rule. Otherwise they <strong>will not</strong> render properly.</li>
+<li>If you&#39;re using a SSR-enabled Svelte framework, the CodeEditor and ReplEditor Components will not render out HTML, only the outer layout frames will.</li>
+</ul><h2 id="browser-support">Browser Support</h2><p>So far only tested on Falkon which is based on QT&#39;s integrated Webkit. That being said, it should <em>probably</em> run in most major <strong>MODERN</strong> Browsers...</p><h2 id="developer">Developer</h2><h3 id="installation">Installation</h3><p>Open your terminal and install via <code>npm</code>:</p><pre><code class="language-sh">npm install git+https://github.com/novacbn/svelte-simple-repl</code></pre><h3 id="usage">Usage</h3><p>First, to import use one of these import paths:</p><ul>
+<li><p><code>import {HorizontalRepl, TabbedRepl, VerticalRepl} from &quot;svelte-simple-repl&quot;;</code> <strong>-</strong> If you don&#39;t care about your bundle weight.</p>
+</li>
+<li><p><code>import {HorizontalRepl, TabbedRepl, VerticalRepl} from &quot;svelte-simple-repl/lib/components&quot;;</code> <strong>-</strong> If you some what care about your bundle weight.</p>
+</li>
+<li><p><code>import HorizontalRepl or TabbedRepl or VerticalRepl from &quot;svelte-simple-repl/lib/components/repls/{HorizontalRepl, TabbedRepl, VerticalRepl}.svelte&quot;;</code> <strong>-</strong> For granular control.</p>
+</li>
+</ul><p>Then simply pass in code to the <code>.value</code> property, e.g.:</p><pre><code class="language-html">&lt;script&gt;
+import {VerticalRepl} from &quot;svelte-simple-repl&quot;;
+
+/**
+ * HUGE NOTE HERE: You can&#39;t ACTUALLY write Svelte Component code within a Component as a string... the compiler currently
+ * freaks out about it. So you&#39;ll need to actually import your example codes from some other file, like `.json` or `.txt` or something.
+ *
+ * Notice how I do that in `/docs/src/ReplDemo.svelte` via `examples.toml`
+ */
+
+const hello_world_component =`&lt;script&gt;
+    const name = &quot;world&quot;;
+&lt;/script&gt;
+
+&lt;h1&gt;Hello, {name}!&lt;/h1&gt;`;
+&lt;/script&gt;
+
+&lt;VerticalRepl value={hello_world_component} /&gt;</code></pre><p>When the end-user inputs code that has a compile-time error, it&#39;ll be displayed in yellow-ish text. When they have a Component initialization-time error, it&#39;ll be displayed in red-ish text. <em>(Svelte doesn&#39;t provide built-in error handling, so initialization-time is best I can do without get hacky)</em></p><h3 id="properties">Properties</h3><p>Each type of <code>[type]Repl</code> Component have various customizable properties you can edit.</p><h4 id="shared-properties">Shared Properties</h4><p>Each <code>[type]Repl</code> Component share all the same exported properties with these defaults:</p><ul>
+<li><p><code>class: string = &quot;&quot;;</code> <strong>-</strong> Sets the <code>.class</code> attribute of the <code>HTMLElement</code></p>
+</li>
+<li><p><code>style: string = &quot;&quot;;</code> <strong>-</strong> Sets the <code>.style</code> attribute of the <code>HTMLElement</code></p>
+</li>
+<li><p><code>language: string = &quot;html&quot;;</code> - Sets the syntax highlighting language of the Ace Code Editor. Normally you shouldn&#39;t adjust this.</p>
+</li>
+<li><p><code>theme: string = &quot;chrome&quot;;</code> <strong>-</strong> Sets the theme of <a href="https://ace.c9.io">Ace Code Editor</a>, see <a href="https://docs.c9.io/docs/syntax-highlighting-themes">Syntax Highlighting and Themes</a> for list of available themes.</p>
+</li>
+<li><p><code>options: {&#39;Object&lt;string, any&gt;&#39;} = {&#39;{}&#39;};</code> <strong>-</strong> Sets the options passed into the Ace Code Editor, see <a href="https://github.com/ajaxorg/ace/wiki/Configuring-Ace">Configuring Ace</a> for a list of options.</p>
+</li>
+<li><p><code>value: string = &quot;&quot;;</code> <strong>-</strong> Sets the value passed into the Code View and Preview View.</p>
+</li>
+<li><p><code>title_code: string = &quot;Code&quot;;</code> <strong>-</strong> Sets the title of the Code View.</p>
+</li>
+<li><p><code>title_preview: string = &quot;Preview&quot;;</code> <strong>-</strong> Sets the title of the Preview View.</p>
+</li>
+<li><p><code>modules: Object&lt;string, any&gt;; = REPL_DEFAULT_MODULES;</code> <strong>-</strong> See the &quot;Customizing / Runtime Imports&quot; section below</p>
+</li>
+<li><p><code>importers: ((name: string) =&gt; any)[] = [];</code> <strong>-</strong> See the &quot;Customizing / Runtime Imports&quot; section below</p>
+</li>
+</ul><h4 id="horizontalrepl-properties"><code>HorizontalRepl</code> Properties</h4><p>The <code>HorizontalRepl</code> has some specific properties only applicable to it:</p><ul>
+<li><p><code>slider: number = 65;</code> <strong>-</strong> Sets the default percentage position of the horizontal slider along the width of the <code>.sr-horizontal-frame</code> element.</p>
+</li>
+<li><p><code>slider_max: number = 75;</code> <strong>-</strong> Sets the maximum the end-user can slide the horizontal slider to the left.</p>
+</li>
+<li><p><code>slider_min: number = 25;</code> <strong>-</strong> Sets the minimum the end-user can slide the horizontal slider to the right.</p>
+</li>
+</ul><h4 id="tabbedrepl-properties"><code>TabbedRepl</code> Properties</h4><p>The <code>TabbedRepl</code> has some specific properties only applicable to it:</p><ul>
+<li><code>mode: TABBED_FRAME_MODES = TABBED_FRAME_MODES.code</code> <strong>-</strong> Sets the currently / default selected Repl view.</li>
+</ul><h3 id="customizing">Customizing</h3><h4 id="ace-code-editor-themes">Ace Code Editor Themes</h4><p>As shown above, visit <a href="https://docs.c9.io/docs/syntax-highlighting-themes">Syntax Highlighting and Themes</a> for all the available standard themes. Only <code>chrome</code> is imported by default. So if you wish to change, you&#39;ll need to import from the <a href="https://github.com/thlorenz/brace"><code>brace</code></a> wrapper library in the following format:</p><pre><code class="language-javascript">import &quot;brace/theme/${theme_file_name}&quot;;</code></pre><p>As an example:</p><pre><code class="language-javascript">import &quot;brace/theme/clouds_midnight&quot;;</code></pre><h4 id="css-styling">CSS Styling</h4><p>Each type of Repl is fully annotated with CSS classes to support full customization and theming, see below for sample layout of each Repl type:</p><p><strong>HorzontialRepl</strong></p><pre><code class="language-html">&lt;div
+    class=&quot;sr-horizontal-frame 
+    sr-horizontal-repl&quot;
+    style=&quot;height:256px;&quot;
+&gt;
+    &lt;fieldset class=&quot;sr-horizontal-frame--container&quot; style=&quot;width: 65%;&quot;&gt;
+        &lt;legend&gt;Code&lt;/legend&gt;
+        &lt;div class=&quot;sr-horizontal-frame--view&quot; style=&quot;height:calc(100% - 18px)&quot;&gt;
+            &lt;div slot=&quot;code-view&quot;&gt;
+                &lt;div class=&quot;sr-code-editor&quot; style=&quot;width:100%;height:100%;&quot;&gt;
+                    &lt;!-- ...Repl code view --&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/fieldset&gt;
+
+    &lt;div class=&quot;sr-horizontal-frame--slider&quot;&gt;↔&lt;/div&gt;
+
+    &lt;fieldset class=&quot;sr-horizontal-frame--container&quot; style=&quot;width: 35%;&quot;&gt;
+        &lt;legend&gt;Preview&lt;/legend&gt;
+        &lt;div class=&quot;sr-horizontal-frame--view&quot; style=&quot;height:calc(100% - 18px)&quot;&gt;
+            &lt;div slot=&quot;preview-view&quot;&gt;
+                &lt;div class=&quot;sr-repl-editor&quot; style=&quot;width:100%;height:100%;&quot;&gt;
+                    &lt;!-- ...Repl preview view... --&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/fieldset&gt;
+&lt;/div&gt;</code></pre><p><strong>TabbedRepl</strong></p><pre><code class="language-html">&lt;fieldset
+    class=&quot;sr-tabbed-frame sr-tabbed-repl&quot;
+    data-tabbed-frame-mode=&quot;MODE_CODE&quot;
+    style=&quot;height:256px;&quot;
+&gt;
+    &lt;legend class=&quot;sr-tabbed-frame--title&quot;&gt;
+        &lt;button class=&quot;sr-tabbed-frame--button&quot; disabled=&quot;&quot;&gt;Code&lt;/button&gt;
+        &lt;button class=&quot;sr-tabbed-frame--button&quot;&gt;Preview&lt;/button&gt;
+    &lt;/legend&gt;
+
+    &lt;div class=&quot;sr-tabbed-frame--view&quot; style=&quot;height:calc(100% - 42px)&quot;&gt;
+        &lt;div slot=&quot;code-view&quot;&gt;
+            &lt;div class=&quot;sr-code-editor &quot; style=&quot;width:100%;height:100%;&quot;&gt;
+                &lt;!-- ...Repl code view --&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;sr-tabbed-frame--view&quot; style=&quot;height:calc(100% - 42px)&quot;&gt;
+        &lt;div slot=&quot;preview-view&quot;&gt;
+            &lt;div class=&quot;sr-repl-editor&quot; style=&quot;width:100%;height:100%;&quot;&gt;
+                &lt;!-- ...Repl preview view... --&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/fieldset&gt;</code></pre><p><strong>VerticalRepl</strong></p><pre><code class="language-html">&lt;fieldset class=&quot;sr-vertical-frame sr-vertical-repl&quot; style=&quot;height:256px;&quot;&gt;
+    &lt;legend class=&quot;sr-vertical-frame--title&quot;&gt;Code&lt;/legend&gt;
+    &lt;div class=&quot;sr-vertical-frame--view&quot; style=&quot;height:calc(100% - 18px)&quot;&gt;
+        &lt;div slot=&quot;code-view&quot;&gt;
+            &lt;div class=&quot;sr-code-editor &quot; style=&quot;width:100%;height:100%;&quot;&gt;
+                &lt;!-- ...Repl code view... --&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/fieldset&gt;
+
+&lt;fieldset class=&quot;sr-vertical-frame sr-vertical-repl &quot; style=&quot;height:256px;&quot;&gt;
+    &lt;legend class=&quot;sr-vertical-frame--title&quot;&gt;Preview&lt;/legend&gt;
+    &lt;div class=&quot;sr-vertical-frame--view&quot; style=&quot;height:calc(100% - 18px)&quot;&gt;
+        &lt;div slot=&quot;preview-view&quot;&gt;
+            &lt;div class=&quot;sr-repl-editor&quot; style=&quot;width:100%;height:100%;&quot;&gt;
+                &lt;!-- ...Repl preview view... --&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/fieldset&gt;</code></pre><p><strong>Error Theming</strong></p><p>You should also note, you can theme the error messages as-well. They appear as children of <code>.sr-repl-editor</code> when present:</p><pre><code class="language-html">&lt;!-- Represents an error that happens during compile-time, typically yellow-ish --&gt;
+&lt;h3 class=&quot;sr-repl-editor--compile&quot;&gt;...&lt;/h3&gt;
+
+&lt;!-- Represents an error that happens during runtime, typically red-ish --&gt;
+&lt;h3 class=&quot;sr-repl-editor--runtime&quot;&gt;...&lt;/h3&gt;</code></pre><h4 id="runtime-repl-imports">Runtime Repl Imports</h4><p>By default <code>svelte</code>, <code>svelte/internal</code>, and <code>svelte/store</code> are already exposed for importing. You can also provide additional imports to Repls via both the <code>.modules</code> and <code>.importers</code> properties. This will allow code ran in a Repl to import anything you specify. For example say we have a <code>./addition_math.js</code> file:</p><pre><code class="language-javascript">export function add(a, b) {
+    return a + b;
+}</code></pre><p>Simple right? And to expose it to our Repl in <code>./SampleView.svelte</code>:</p><pre><code class="language-html">&lt;script context=&quot;module&quot;&gt;
+    // NOTE: You can define your module map anywhere within your codebase. This is just as an example.
+    import {REPL_DEFAULT_MODULES} from &quot;svelte-simple-repl&quot;;
+
+    import addition_math_lib from &quot;./addition_math&quot;;
+
+    // And then here, since we&#39;re overriding the default modules. We need to import them and
+    // them as our base. And then specify our custom module.
+    const exposed_modules = {
+        ...REPL_DEFAULT_MODULES,
+        addition_math: addition_math_lib
+    };
+&lt;/script&gt;
+
+&lt;script&gt;
+    import VerticalRepl from &quot;svelte-simple-repl&quot;;
+
+    let value = &quot;...&quot;;
+&lt;/script&gt;
+
+&lt;!-- prettier-ignore --&gt;
+&lt;VerticalRepl modules={exposed_modules} {value} /&gt;</code></pre><p>And finally in our provided Repl via <code>VerticalRepl.value</code>, we can import the module like normal:</p><pre><code class="language-html">&lt;script&gt;
+    import {add} from &quot;addition_math&quot;;
+
+    const sum = add(1, 3);
+&lt;/script&gt;
+
+{sum}</code></pre><p>You can also use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#Dynamic_Imports">Dynamic Import Promises</a> as-well, they will be resolved before execution:</p><pre><code class="language-html">&lt;script context=&quot;module&quot;&gt;
+    const exposed_modules = {
+        &quot;addition-math&quot;: import(&quot;./addition_math&quot;)
+    };
+&lt;/script&gt;</code></pre><p>And lastly regarding imports, you can define dynamic import functions via <code>.importers</code> property. Just supply an <code>Array</code> of functions that take strings and return any or no value:</p><pre><code class="language-html">&lt;script context=&quot;module&quot;&gt;
+    // NOTE: You can define your module map anywhere within your codebase. This is just as an example.
+    import {REPL_DEFAULT_MODULES} from &quot;svelte-simple-repl&quot;;
+
+    import addition_math_lib from &quot;./addition_math&quot;;
+
+    // The importers are executed in the `Array`&#39;s index ordering
+    const exposed_importers = [
+        (name) =&gt; {
+            if (name === &quot;addition_math&quot;) return addition_math_lib;
+        }
+    ];
+&lt;/script&gt;
+
+&lt;script&gt;
+    import VerticalRepl from &quot;svelte-simple-repl&quot;;
+
+    let value = &quot;...&quot;;
+&lt;/script&gt;
+
+&lt;!-- prettier-ignore --&gt;
+&lt;VerticalRepl importers={exposed_importers} {value} /&gt;</code></pre><p>Please note however, these importers <strong>CANNOT</strong> return <code>Promise</code>s. They must be synchronous only, since the Repls cannot resolve them ahead of time.</p>
