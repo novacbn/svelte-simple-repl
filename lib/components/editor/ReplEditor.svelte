@@ -50,6 +50,13 @@
             }
         }
     }
+
+    onDestroy(() => {
+        if (_component) {
+            _component.$destroy();
+            _component = null;
+        }
+    });
 </script>
 
 <style>

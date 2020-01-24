@@ -4,10 +4,13 @@
     "description": "Simple Svelte v3 Component for providing an end-user editable view for real-time editing of Svelte code",
     "keywords": [
         "repl",
-        "svelte"
+        "svelte",
+        "svelte-components"
     ],
+    "main": "lib/index.js",
     "files": [
-        "dist"
+        "dist",
+        "lib"
     ],
     "author": "novacbn",
     "repository": {

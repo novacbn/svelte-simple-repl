@@ -32,7 +32,7 @@ So far only tested on Falkon which is based on QT's integrated Webkit. That bein
 Open your terminal and install via `npm`:
 
 ```sh
-npm install git+https://github.com/novacbn/svelte-simple-repl
+npm install git+https://github.com/novacbn/svelte-simple-repl#0.0.1
 ```
 
 ### Usage
